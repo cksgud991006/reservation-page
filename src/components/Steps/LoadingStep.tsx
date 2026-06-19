@@ -26,6 +26,7 @@ function LoadingStep({ guid, onComplete, onFailure }: LoadingStepProps) {
                         setPosition(response.position);
                     }
                 });
+
             } catch (error) {
                 onFailure();
                 clearInterval(intervalId);
@@ -43,8 +44,8 @@ function LoadingStep({ guid, onComplete, onFailure }: LoadingStepProps) {
     return (
         <div>
           <h2>Processing...</h2>
-          <p>Please wait while we verify your request.</p>
-          <p>Note: This process may take a few seconds{'.'.repeat(dots)}</p>
+          <p>Our server is currently "sleeping" to save costs. It takes up to 20-30 seconds to wake up.</p>
+          <p>Thanks for your patience while we get things running{'.'.repeat(dots)}</p>
           {
             position > 0 && <p>Your current position in the queue: {position}</p>
           }

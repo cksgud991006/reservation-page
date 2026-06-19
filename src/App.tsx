@@ -7,16 +7,18 @@ import StartStep from './components/Steps/StartStep';
 import FailureStep from './components/Steps/FailureStep';
 import { postData, getData } from './services/api';
 import { type StepType, START_STEP } from '../constants/page';
-import { FLIGHT_NUMBERS } from '../constants/flight';
-import { type SeatInfo } from './services/types';
+import { type FlightInstance, type SeatInfo } from './services/types';
 
 // App.tsx
 function App() {
   // Logic State
   const [flightNumber, setFlightNumber] = useState('');
+  const [flightId, setFlightId] = useState('');
+  //const [departureTime, setDepartureTime] = useState('');
   const [guid, setGuid] = useState('');
   const [step, setStep] = useState<StepType>(START_STEP);
   const [seats, setSeats] = useState<SeatInfo[]>([]);
+  const [flightInstances, setFlightInstances] = useState<FlightInstance[]>([]); 
   const [reservedSeats, setReservedSeats] = useState<SeatInfo[]>([]);
   const [selectedSeats, setSelectedSeats] = useState<SeatInfo[]>([]);
 
@@ -35,12 +37,15 @@ function App() {
   }, [step]);
 
 
-  const handleStartComplete = (flightNumber: string) => {
+  const handleStartComplete = (flightNumber: string, flightId: string) => {
+      
       setFlightNumber(flightNumber);
+      //setDepartureTime(departureTime);
+      setFlightId(flightId);
 
       try {
         postData("queue", {
-          Id: guid,
+          UserId: guid,
           RequestTime: new Date().toISOString(),
           IdempotencyKey: guid
         });
@@ -55,9 +60,7 @@ function App() {
   const handleLoadingComplete = async () => {
 
     try {
-      
-      // Fetch all seats on initial load
-      getData<SeatInfo[]>("seats/total/{flightNumber}", { flightNumber: flightNumber }).then((response) => {
+      getData<SeatInfo[]>("api/seatLayout/{flightNumber}", { flightNumber: flightNumber }).then((response) => {
         const sortedSeats = response.sort((a, b) => {
           return a.seatNumber.localeCompare(b.seatNumber, undefined, { 
             numeric: true,
@@ -67,8 +70,7 @@ function App() {
         setSeats(sortedSeats);
       });
 
-      // Fetch reserved seats on initial load
-      getData<SeatInfo[]>("seats/reserved/{flightNumber}", { flightNumber: flightNumber }).then((response) => {
+      getData<SeatInfo[]>("api/flightBooking/{flightId}", { flightId: flightId }).then((response) => {
         setReservedSeats(response);
       });
   
@@ -89,9 +91,7 @@ function App() {
     
       const seatRequests = selectedSeats.map((seat) => {
         return postData("seat", {
-          FlightNumber: flightNumber,
-          Date: new Date().toISOString(),
-          SeatClass: seat.seatClass,
+          FlightId: flightId,
           SeatNumber: seat.seatNumber,
           Id: guid
         });
@@ -107,7 +107,7 @@ function App() {
 
   return (
     <div style={{ padding: '20px' }}>
-      {step === 'START' && <StartStep flightNumbers={FLIGHT_NUMBERS} onComplete={handleStartComplete}/>}
+      {step === 'START' && <StartStep flightInstances={flightInstances} setFlightInstances={setFlightInstances} onComplete={handleStartComplete}/>}
     
       {step === 'LOADING' && <LoadingStep guid={guid} onComplete={handleLoadingComplete} onFailure={handleLoadingFailure} />}
 

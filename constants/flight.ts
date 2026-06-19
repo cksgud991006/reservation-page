@@ -1,9 +1,3 @@
-export const FLIGHT_NUMBERS = [
-    "AA123",
-    "BB456",
-    "CC789"
-] as const;
-
 export const FLIGHT_CLASSES = {
     ECONOMY: "Economy",
     BUSINESS: "Business"

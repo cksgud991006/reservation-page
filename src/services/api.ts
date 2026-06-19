@@ -26,7 +26,7 @@ export const getData = async<T> (endpoint: string, params?: Record<string, strin
         headers: { 'Content-Type': 'application/json' },
     });
 
-    if (!response.ok) throw new Error('API Error');
+    if (!response) throw new Error('API Error');
 
     return response.json();
 };

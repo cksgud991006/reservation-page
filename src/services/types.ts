@@ -16,6 +16,12 @@ export interface SeatInfo {
   seatNumber: string; // Matches your C# property
 }
 
+export interface FlightBookingResponse {
+  flightId: string;
+  seatNumber: string; 
+  userId: string;
+}
+
 export interface FlightIdResponse {
   flightNumber: string;
   departureTime: string;

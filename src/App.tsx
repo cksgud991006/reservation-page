@@ -1,4 +1,4 @@
-import './App.css'
+import './App.css';
 import { useEffect, useState } from 'react';
 import SelectionStep from './components/Steps/SelectionStep';
 import CompleteStep from './components/Steps/CompleteStep';
@@ -7,120 +7,149 @@ import StartStep from './components/Steps/StartStep';
 import FailureStep from './components/Steps/FailureStep';
 import { postData, getData } from './services/api';
 import { type StepType, START_STEP } from '../constants/page';
-import { type FlightInstance, type SeatInfo } from './services/types';
+import { type FlightInstance, type FlightBookingResponse, type SeatInfo } from './services/types';
 
-// App.tsx
-function App() {
-  // Logic State
-  const [flightNumber, setFlightNumber] = useState('');
-  const [flightId, setFlightId] = useState('');
-  //const [departureTime, setDepartureTime] = useState('');
+const MAX_SELECTIONS = 5;
+
+// Helper function to sort seats naturally
+const sortSeats = (seats: SeatInfo[]): SeatInfo[] => {
+  return [...seats].sort((a, b) =>
+    a.seatNumber.localeCompare(b.seatNumber, undefined, {
+      numeric: true,
+      sensitivity: 'base',
+    })
+  );
+};
+
+export default function App() {
+  // Session/Navigation State
   const [guid, setGuid] = useState('');
   const [step, setStep] = useState<StepType>(START_STEP);
+
+  // Flight & Selection State
+  const [flightNumber, setFlightNumber] = useState('');
+  const [flightId, setFlightId] = useState('');
   const [seats, setSeats] = useState<SeatInfo[]>([]);
-  const [flightInstances, setFlightInstances] = useState<FlightInstance[]>([]); 
+  const [flightInstances, setFlightInstances] = useState<FlightInstance[]>([]);
   const [reservedSeats, setReservedSeats] = useState<SeatInfo[]>([]);
   const [selectedSeats, setSelectedSeats] = useState<SeatInfo[]>([]);
 
-  const MAX_SELECTIONS = 5;
-
+  // Initialize GUID on mount
   useEffect(() => {
-    // Generate a new GUID for each session
-    const newGuid = crypto.randomUUID();
-    setGuid(newGuid);
+    setGuid(crypto.randomUUID());
   }, []);
 
+  // Reset selected seats when returning to START
   useEffect(() => {
     if (step === 'START') {
       setSelectedSeats([]);
     }
   }, [step]);
 
+  const handleStartComplete = (selectedFlightNumber: string, selectedFlightId: string) => {
+    setFlightNumber(selectedFlightNumber);
+    setFlightId(selectedFlightId);
 
-  const handleStartComplete = (flightNumber: string, flightId: string) => {
-      
-      setFlightNumber(flightNumber);
-      //setDepartureTime(departureTime);
-      setFlightId(flightId);
-
-      try {
-        postData("queue", {
-          UserId: guid,
-          RequestTime: new Date().toISOString(),
-          IdempotencyKey: guid
-        });
-
-        setStep('LOADING');
-      } catch (error) {
-        setStep('FAILURE');
-      }
-      
-    };
+    postData("queue", {
+      UserId: guid,
+      RequestTime: new Date().toISOString(),
+      IdempotencyKey: guid,
+    })
+      .then(() => setStep('LOADING'))
+      .catch(() => setStep('FAILURE'));
+  };
 
   const handleLoadingComplete = async () => {
-
     try {
-      getData<SeatInfo[]>("api/seatLayout/{flightNumber}", { flightNumber: flightNumber }).then((response) => {
-        const sortedSeats = response.sort((a, b) => {
-          return a.seatNumber.localeCompare(b.seatNumber, undefined, { 
-            numeric: true,
-            sensitivity: 'base'
-          });
-        });
-        setSeats(sortedSeats);
-      });
+      // Fetch layout and bookings in parallel
+      const [seatsResponse, bookingsResponse] = await Promise.all([
+        getData<SeatInfo[]>("api/seatLayout/{flightNumber}", { flightNumber }),
+        getData<FlightBookingResponse[]>("api/flightBooking/{flightId}", { flightId }),
+      ]);
 
-      getData<SeatInfo[]>("api/flightBooking/{flightId}", { flightId: flightId }).then((response) => {
-        setReservedSeats(response);
-      });
-  
+      const sortedSeats = sortSeats(seatsResponse);
+      setSeats(sortedSeats);
+
+      // Match reserved seats using the newly fetched seats array
+      const matchedReservedSeats = sortedSeats.filter(seat =>
+        bookingsResponse.some(booking => booking.seatNumber === seat.seatNumber)
+      );
+      setReservedSeats(matchedReservedSeats);
+
       setStep('SELECTION');
     } catch (error) {
       setStep('FAILURE');
     }
-
   };
 
-  const handleLoadingFailure = async () => {
-
+  const handleLoadingFailure = () => {
     setStep('FAILURE');
-
   };
 
   const handleSelectionComplete = async () => {
-    
-      const seatRequests = selectedSeats.map((seat) => {
-        return postData("seat", {
-          FlightId: flightId,
-          SeatNumber: seat.seatNumber,
-          UserId: guid
-        });
-      });
+    const seatRequests = selectedSeats.map((seat) =>
+      postData("seat", {
+        FlightId: flightId,
+        SeatNumber: seat.seatNumber,
+        UserId: guid,
+      })
+    );
 
-      await Promise.all(seatRequests).then(() => {
-        setStep('COMPLETE');
-      }).catch(() => {
-        setStep('FAILURE');
-      });
-    };
-  // --- RENDERING LOGIC ---
+    try {
+      await Promise.all(seatRequests);
+      setStep('COMPLETE');
+    } catch (error) {
+      setStep('FAILURE');
+    }
+  };
+
+  const handleSeatToggle = (seat: SeatInfo) => {
+    setSelectedSeats((prev) => {
+      if (prev.includes(seat)) {
+        return prev.filter((s) => s !== seat);
+      }
+      if (prev.length < MAX_SELECTIONS) {
+        return [...prev, seat];
+      }
+      return prev;
+    });
+  };
+
+  const resetToStart = () => setStep('START');
 
   return (
     <div style={{ padding: '20px' }}>
-      {step === 'START' && <StartStep flightInstances={flightInstances} setFlightInstances={setFlightInstances} onComplete={handleStartComplete}/>}
-    
-      {step === 'LOADING' && <LoadingStep guid={guid} onComplete={handleLoadingComplete} onFailure={handleLoadingFailure} />}
+      {step === 'START' && (
+        <StartStep
+          flightInstances={flightInstances}
+          setFlightInstances={setFlightInstances}
+          onComplete={handleStartComplete}
+        />
+      )}
 
-      {step === 'SELECTION' && <SelectionStep seats={seats} reservedSeats={reservedSeats} selectedSeats={selectedSeats} 
-      maxSelections={MAX_SELECTIONS}
-      onSeatToggle={(seat: SeatInfo) => setSelectedSeats(prev => prev.includes(seat) ? prev.filter(s => s !== seat) : prev.length < MAX_SELECTIONS ? [...prev, seat] : prev)}  
-      onComplete={handleSelectionComplete} onCancel={() => setStep('START')} />}
+      {step === 'LOADING' && (
+        <LoadingStep
+          guid={guid}
+          onComplete={handleLoadingComplete}
+          onFailure={handleLoadingFailure}
+        />
+      )}
 
-      {step === 'COMPLETE' && <CompleteStep onReload={() => setStep('START')} />}
+      {step === 'SELECTION' && (
+        <SelectionStep
+          seats={seats}
+          reservedSeats={reservedSeats}
+          selectedSeats={selectedSeats}
+          maxSelections={MAX_SELECTIONS}
+          onSeatToggle={handleSeatToggle}
+          onComplete={handleSelectionComplete}
+          onCancel={resetToStart}
+        />
+      )}
 
-      {step === 'FAILURE' && <FailureStep onRetry={() => setStep('START')} />}
+      {step === 'COMPLETE' && <CompleteStep onReload={resetToStart} />}
+
+      {step === 'FAILURE' && <FailureStep onRetry={resetToStart} />}
     </div>
   );
 }
-
-export default App;

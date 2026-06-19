@@ -12,25 +12,29 @@ interface StartStepProps {
 function StartStep({ flightInstances, setFlightInstances, onComplete }: StartStepProps) {
 
     useEffect(() => {
-        const intervalId = setInterval(() => {
+        // Fetch the available flight instances exactly once when the component mounts
+        const fetchFlights = async () => {
             try {
-                getData<FlightInstance[]>("api/flightInstances").then((response) => {
-                    setFlightInstances(response);
-                });
-
+                const response = await getData<FlightInstance[]>("api/flightInstances");
+                setFlightInstances(response);
             } catch (error) {
-                clearInterval(intervalId);
+                console.error("Failed to fetch flight instances", error);
             }
-        }, 1000); // Poll every 1s
-    }, []);
+        };
+
+        fetchFlights();
+    }, [setFlightInstances]); // Empty or only dependent on stable dispatch/setter
 
     return (
         <div>
           <h2>Find a Seat</h2>
           <p>Available Flight Numbers: </p>
           <div className="button-flex-row">
-            { flightInstances.map(instance => (
-                <button key={instance.flightId} onClick={() => onComplete(instance.flightNumber, instance.flightId)}>
+            {flightInstances.map(instance => (
+                <button 
+                    key={instance.flightId} 
+                    onClick={() => onComplete(instance.flightNumber, instance.flightId)}
+                >
                     {formatFlightName(instance.flightNumber, instance.departureTime)}
                 </button>
             ))}

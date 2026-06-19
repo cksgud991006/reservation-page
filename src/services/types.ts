@@ -11,36 +11,36 @@ export interface TicketSessionResponse {
 }
 
 export interface SeatInfo {
-  FlightNumber: string;
+  flightNumber: string;
   seatClass: typeof FLIGHT_CLASSES[keyof typeof FLIGHT_CLASSES]; // Matches your C# property
   seatNumber: string; // Matches your C# property
 }
 
 export interface FlightIdResponse {
-  FlightNumber: string;
-  DepartureTime: string;
-  FlightId: string;
+  flightNumber: string;
+  departureTime: string;
+  flightId: string;
 }
 
 export interface FlightInstance {
-  FlightNumber: string;
-  DepartureTime: string;
-  FlightId: string;
+  flightNumber: string;
+  departureTime: string;
+  flightId: string;
 }
 
 export interface FlightSeatCountResponse {
-  FlightId: string;
-  TotalSeatCount: Number;
+  flightId: string;
+  totalSeatCount: Number;
 }
 
 export interface FlightIdResponse {
-  FlightNumber: string;
-  SeatNumber: string;
-  SeatClass: typeof FLIGHT_CLASSES[keyof typeof FLIGHT_CLASSES];
+  flightNumber: string;
+  seatNumber: string;
+  seatClass: typeof FLIGHT_CLASSES[keyof typeof FLIGHT_CLASSES];
 }
 
 export interface FlightIdResponse {
-  FlightId: string;
-  SeatNumber: string;
-  UserId: string;
+  flightId: string;
+  seatNumber: string;
+  userId: string;
 }

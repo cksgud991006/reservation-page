@@ -93,7 +93,7 @@ function App() {
         return postData("seat", {
           FlightId: flightId,
           SeatNumber: seat.seatNumber,
-          Id: guid
+          UserId: guid
         });
       });
 

@@ -1,5 +1,5 @@
 import SeatGrid from "../SeatGrid/SeatGrid";
-import { type SeatInfo } from "../../services/types";
+import { type SeatInfo } from "../../api/types";
 
 interface SelectionStepProps {
     seats: SeatInfo[];

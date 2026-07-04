@@ -1,6 +1,6 @@
 import { useEffect } from "react";
-import { getData } from "../../services/api";
-import type { FlightInstance } from "../../services/types";
+import { getData } from "../../api/api";
+import type { FlightInstance } from "../../api/types";
 import { formatFlightName } from "../../core/format";
 
 interface StartStepProps {

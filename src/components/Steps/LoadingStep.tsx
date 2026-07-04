@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { getData } from "../../services/api";
-import type { TicketWaitResponse } from "../../services/types";
+import { getData } from "../../api/api";
+import type { TicketWaitResponse } from "../../api/types";
 
 interface LoadingStepProps {
     guid: string;

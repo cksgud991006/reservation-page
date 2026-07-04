@@ -1,5 +1,5 @@
 import { FLIGHT_CLASSES, FLIGHT_STATUS } from "../../../constants/flight";
-import type { SeatInfo } from "../../services/types";
+import type { SeatInfo } from "../../api/types";
 
 interface SeatProps {
     seat: SeatInfo;

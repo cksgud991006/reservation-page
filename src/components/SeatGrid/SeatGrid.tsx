@@ -1,5 +1,5 @@
 import Seat from './Seat';
-import { type SeatInfo } from '../../services/types';
+import { type SeatInfo } from '../../api/types';
 import { FLIGHT_STATUS } from '../../../constants/flight';
 
 interface SeatGridProps {

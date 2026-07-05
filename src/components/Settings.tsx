@@ -6,10 +6,10 @@ interface Props {
     onSaved: (url: string) => void;
 }
 
-export function Settings({ onSaved }: Props) {
-    const [url, setUrl] = useState(getApiBaseUrl());
-    const [message, setMessage] = useState('');
-    const [loading, setLoading] = useState(false);
+export default function Settings({ onSaved }: Props) {
+    const [url, setUrl] = useState<string>(getApiBaseUrl());
+    const [message, setMessage] = useState<string | null>(null);
+    const [loading, setLoading] = useState<boolean>(false);
 
     const connect = async () => {
         setLoading(true);
@@ -40,10 +40,10 @@ export function Settings({ onSaved }: Props) {
                     onChange={(e) => setUrl(e.target.value)}
                     placeholder={getApiBaseUrl()}
                 />
-                <button onClick={connect}> {loading? 'Connecting...' : 'Connect'} </button>
+                <button onClick={connect}> {loading? 'Connecting…' : 'Connect'} </button>
             </div>
             <div>
-                {message !== '' && (
+                {message && (
                     <p>
                     {message}
                     </p>

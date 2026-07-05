@@ -32,10 +32,6 @@ export interface ReservationBookResponse {
   details: string;
 }
 
-export interface ReservationBookFailureResponse {
-  details: string;
-}
-
 export interface EnqueueResponse {
   success: boolean;
 }

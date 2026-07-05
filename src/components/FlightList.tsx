@@ -31,15 +31,15 @@ export default function FlightList({ reloadToken, selectedFlight, onSelect }: Pr
 
 
     return (
-        <section>
-            <div>
+        <section className="panel">
+            <div className="panel-header">
                 <h2> Flights </h2>
                 <button onClick={load} disabled={loading}> 
                     {loading ? 'Loading…' : 'Refresh' }
                 </button>
             </div>
-            {error && (<p> {error} </p>)}
-            {}
+            {error && (<p className="status-fail"> {error} </p>)}
+            {!error && flights.length === 0 && !loading && <p className="hint">No flights found.</p>}
             {flights.length > 0 && (
                 <table>
                     <thead>

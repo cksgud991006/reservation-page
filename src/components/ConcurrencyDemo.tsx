@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { api, enqueueToActiveSession, getApiBaseUrl } from "../api/api";
 
 interface Props {
@@ -77,12 +77,17 @@ export default function ConcurrencyDemo({ defaultFlightId, onFire }: Props) {
         setPhase(null);
         setRunning(false);
     }
+
+    useEffect(() => {
+        setFlightId(defaultFlightId);
+    }, [defaultFlightId])
+
  
     return (
-        <section>
+        <section className="panel">
             <h2> Concurrency Demo </h2>
-            <p> Fires N booking requests at the same seat simultaneously to demonstrate that Redis + Lua locking allows exactly one to win, regardless of how many arrive at once. </p>
-            <div>
+            <p className="hint"> Fires N booking requests at the same seat simultaneously to demonstrate that Redis + Lua locking allows exactly one to win, regardless of how many arrive at once. </p>
+            <div className="row">
                 <label>
                     Flight ID
                     <input value={flightId} onChange={(e) => setFlightId(e.target.value)} placeholder={`e.g.${defaultFlightId}`}/>
@@ -99,7 +104,7 @@ export default function ConcurrencyDemo({ defaultFlightId, onFire }: Props) {
                     {running ? 'Running…' : 'Fire'}
                 </button>
             </div>
-            {phase && <p> {phase} </p>}
+            {phase && <p className="hint"> {phase} </p>}
             {summary && 
                 <div>
                     <p>  

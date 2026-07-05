@@ -18,7 +18,7 @@ export interface ApiResult<T> {
 
 // params to body
 export const postData = async<T> (endpoint: string, body: any): Promise<ApiResult<T>> => {
-    const response = await fetch(`${getApiBaseUrl()}/${endpoint}`, {
+    const response = await fetch(`${getApiBaseUrl()}${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
@@ -41,7 +41,7 @@ export const postData = async<T> (endpoint: string, body: any): Promise<ApiResul
 
 // params to url
 export const getData = async<T> (endpoint: string, params?: Record<string, string>): Promise<ApiResult<T>> => {
-    let url = `${getApiBaseUrl()}/${endpoint}`;
+    let url = `${getApiBaseUrl()}${endpoint}`;
     
     if (params) {
         Object.entries(params).forEach(([key, val]) => {

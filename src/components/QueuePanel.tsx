@@ -44,10 +44,10 @@ export default function QueuePanel({  }: Props) {
 
 
     return (
-        <section>
+        <section className="panel">
             <h2> Queue & Session Lookup </h2>
-            <p> Utility panel for the wait-queue and Redis session endpoints. </p>
-            <div>
+            <p className="hint"> Utility panel for the wait-queue and Redis session endpoints. </p>
+            <div className="row">
                 <label>
                     User ID
                     <input

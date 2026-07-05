@@ -17,7 +17,7 @@ export default function App() {
     <div>
       <header>
         <h1>Reservation API</h1>
-        <p>
+        <p className="hint">
           A dashboard for the 
             <a href="https://github.com/cksgud991006/reservation-page">
               Reservation Server

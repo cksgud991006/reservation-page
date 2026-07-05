@@ -88,23 +88,23 @@ export default function SeastMap({ flight }: Props) {
     };
 
     return (
-        <section>
-            <div>
+        <section className="panel">
+            <div className="panel-header">
                 <h2>Seat Map - {flight.flightNumber} ({flight.departureTime})</h2>
                 <button onClick={load} disabled={loading}>
                     { loading? 'Loading…' : 'Refresh' }
                 </button>
             </div>
-            { error && <p> {error} </p> }
-            { !error && seats.length === 0 && !loading && <p> No seats defined for this flight. </p> }
+            {error && <p className="status-fail">{error}</p>}
             { pendingPhase && <p> {pendingPhase} </p> }
             { latestResult && <p> Seat {latestResult.seatNumber}: {latestResult.message} </p> } 
-            <div>
+            <div className="seat-grid">
                 {seats.map((seat) => {
                     const booked = bookedSeats.has(seat.seatNumber);
                     const pending = pendingSeats.includes(seat.seatNumber);
                     return (
                         <button
+                            className={booked? 'seat-booked' : 'seat'}
                             key={seat.seatNumber}
                             disabled={booked || pending}
                             onClick={() => {bookSeat(flight.flightId, seat.seatNumber, userId)}}

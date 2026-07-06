@@ -10,6 +10,7 @@ import QueuePanel from './components/QueuePanel';
 export default function App() {
 
   // Signal for base api url change 
+  const [apiUrl, setApiUrl] = useState<string>('');
   const [reloadToken, setReloadToken] = useState<string>('');
   const [selectedFlight, setSelectedFlight] = useState<FlightInstance | null>(null);
 
@@ -26,10 +27,10 @@ export default function App() {
         </p>
       </header>
 
-      <Settings onSaved={setReloadToken}/>
+      <Settings onSaved={setApiUrl}/>
 
       <FlightList 
-        reloadToken={reloadToken}
+        apiUrl={apiUrl}
         selectedFlight={selectedFlight}
         onSelect={setSelectedFlight}
       />

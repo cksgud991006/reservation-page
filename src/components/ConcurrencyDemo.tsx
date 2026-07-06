@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { api, enqueueToActiveSession, getApiBaseUrl } from "../api/api";
+import { api, enqueueToActiveSession } from "../api/api";
 
 interface Props {
     defaultFlightId: string;
@@ -63,7 +63,7 @@ export default function ConcurrencyDemo({ defaultFlightId, onFire }: Props) {
             details.set(message, (size ?? 0) + 1);
         }
         
-        onFire(getApiBaseUrl());
+        onFire(crypto.randomUUID());
         setSummary({
             total: booked.length,
             successCount: successCount,

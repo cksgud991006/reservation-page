@@ -3,12 +3,12 @@ import { api } from "../api/api"
 import type { FlightInstance } from "../api/types";
 
 interface Props {
-    reloadToken: string;
+    apiUrl: string;
     selectedFlight: FlightInstance | null;
     onSelect: (flight: FlightInstance) => void;
 }
 
-export default function FlightList({ reloadToken, selectedFlight, onSelect }: Props) {
+export default function FlightList({ apiUrl, selectedFlight, onSelect }: Props) {
     const [flights, setFlights] = useState<FlightInstance[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -27,7 +27,7 @@ export default function FlightList({ reloadToken, selectedFlight, onSelect }: Pr
 
     useEffect(() => {
         load();
-    }, [reloadToken]);
+    }, [apiUrl]);
 
 
     return (

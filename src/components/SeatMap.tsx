@@ -39,7 +39,7 @@ export default function SeastMap({ reloadToken, flight }: Props) {
             return;
         }
 
-        setSeats((layoutResult.data ?? []).sort((a, b) => Number(a.seatNumber) - Number(b.seatNumber)));
+        setSeats((layoutResult.data ?? []).sort((a, b) => a.seatNumber.localeCompare(b.seatNumber, undefined, { numeric: true })));
         setBookedSeats(new Set((bookingResult.data ?? []).map((b) => b.seatNumber)));
     }
 
@@ -77,7 +77,7 @@ export default function SeastMap({ reloadToken, flight }: Props) {
                 ok: result.ok,
                 message: `Booked as ${userId.slice(0, 8)}… (booking ${result.data?.bookingId ?? '?'})`
             });
-            await load();
+            setBookedSeats((prev) => new Set(prev).add(seatNumber));
         } else {
             setLatestResult({
                 seatNumber: seatNumber,

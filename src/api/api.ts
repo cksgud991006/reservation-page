@@ -4,7 +4,7 @@ const STORAGE_KEY = 'reservation-api-base-url';
 export const DEFAULT_BASE_URL = import.meta.env.API_BASE_URL;
 
 export const getApiBaseUrl = (): string => {
-    return localStorage.getItem(STORAGE_KEY) ?? DEFAULT_BASE_URL;
+    return localStorage.getItem(STORAGE_KEY) || DEFAULT_BASE_URL;
 }
 
 export const setApiBaseUrl = (url: string): void => {

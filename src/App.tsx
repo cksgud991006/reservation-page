@@ -18,7 +18,7 @@ export default function App() {
       <header>
         <h1>Reservation API</h1>
         <p className="hint">
-          A dashboard for the 
+          A dashboard for the{' '}
             <a href="https://github.com/cksgud991006/reservation-page">
               Reservation Server
             </a>
@@ -34,7 +34,7 @@ export default function App() {
         onSelect={setSelectedFlight}
       />
 
-      {selectedFlight && <SeatMap flight={selectedFlight}/>}
+      {selectedFlight && <SeatMap reloadToken={reloadToken} flight={selectedFlight}/>}
 
       <ConcurrencyDemo 
         defaultFlightId={selectedFlight?.flightId ?? ''}

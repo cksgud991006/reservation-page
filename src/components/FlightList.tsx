@@ -52,10 +52,10 @@ export default function FlightList({ reloadToken, selectedFlight, onSelect }: Pr
                     <tbody>
                         {
                             flights.map((f) => (
-                                <tr>
-                                    <td> {f.flightId} </td>
-                                    <td> {f.departureTime} </td>
+                                <tr className={f.flightId === selectedFlight?.flightId ? 'selected' : ''}>
                                     <td> {f.flightNumber} </td>
+                                    <td> {f.departureTime} </td>
+                                    <td> {f.flightId} </td>
                                     <td>
                                         <button onClick={() => {onSelect(f)}}>
                                             {f.flightId === selectedFlight?.flightId ? 'Selected' : 'Select'}

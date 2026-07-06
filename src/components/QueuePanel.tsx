@@ -37,7 +37,7 @@ export default function QueuePanel({  }: Props) {
         setLoading(true);
         var response = await api.getSessionStatus(userId);
         if (response.ok) {
-            setMessage(response.data!.timeExpiry === -1? 'No active session.' : `Session active until ${response.data!.timeExpiry.toLocaleString()}`);
+            setMessage(response.data!.timeExpiry === -1? 'No active session.' : `Session active until ${new Date(response.data!.timeExpiry * 1000).toLocaleString()}`);
         }
         setLoading(false);
     }
@@ -77,8 +77,8 @@ export default function QueuePanel({  }: Props) {
                     onClick={checkSession}>
                     Check Session
                 </button>
-                {message && <p>{message}</p>}
             </div>
+            {message && <p className="hint">{message}</p>}
         </section>
     );
 }

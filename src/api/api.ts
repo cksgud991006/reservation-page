@@ -74,9 +74,9 @@ export const api = {
     getSeatLayout: (flightNumber: string) => getData<SeatLayout[]>('/api/flights/{flightNumber}/seats', { flightNumber : flightNumber }),
     getSeatCount: (flightId: string) => getData<FlightSeatCount[]>('/api/flights/{flightId}/seats/count', { flightId: flightId }),
     getFlightBookings: (flightId: string) => getData<FlightBooking[]>('/api/flights/{flightId}/bookings', { flightId: flightId }),
-    getQueueStatus: (userId: string) => getData<ReservationWaitResponse>(`/api/queue/{id}`, { userId: userId }),
-    getSessionStatus: (userId: string) => getData<ReservationSessionResponse>(`/api/sessions/{id}`, { userId: userId }),
-    reserveSeat: (flihgtId: string, seatNumber: string, userId: string) => postData<ReservationBookResponse>('/api/bookings', { flightId: flihgtId, seatNumber: seatNumber, userId: userId  }),
+    getQueueStatus: (userId: string) => getData<ReservationWaitResponse>(`/api/queue/{id}`, { id: userId }),
+    getSessionStatus: (userId: string) => getData<ReservationSessionResponse>(`/api/sessions/{id}`, { id: userId }),
+    reserveSeat: (flightId: string, seatNumber: string, userId: string) => postData<ReservationBookResponse>('/api/bookings', { flightId: flightId, seatNumber: seatNumber, userId: userId  }),
     enqueue: (userId: string, requestTime: string, idempotencyKey: string) => postData<EnqueueResponse>('/api/queue', { userId: userId, requestTime: requestTime, idempotencyKey: idempotencyKey  })
 }  
 
@@ -86,12 +86,12 @@ export const enqueueToActiveSession = async (userId: string, requestTime: string
     const timeoutMs = 10000;
     const pollMs = 1000;
 
-    api.enqueue(userId, requestTime, idempotencyKey);
+    await api.enqueue(userId, requestTime, idempotencyKey);
 
     const deadline = Date.now() + timeoutMs;
     while (Date.now() < deadline) {
-        const status = await api.getSessionStatus(userId);
-        if (status.ok && status.data?.timeExpiry) return {
+        var status = await api.getSessionStatus(userId);
+        if (status.ok && status.data!.timeExpiry !== -1) return {
             success: true
         };
         onTick?.(timeoutMs - (deadline - Date.now()));

@@ -89,3 +89,13 @@ tr.selected {
   border-color: var(--border);
   text-decoration: line-through;
 }
+
+.summary {
+  margin-top: 12px;
+  font-size: 14px;
+}
+
+.summary ul {
+  margin: 8px 0 0;
+  padding-left: 20px;
+}

@@ -45,13 +45,11 @@ export default function Settings({ onSaved }: Props) {
                 />
                 <button onClick={connect}> {loading? 'Connecting…' : 'Connect'} </button>
             </div>
-            <div>
                 {status !== 'idle' && message && (
                     <p className={status === 'ok' ? 'status-ok' : status === 'fail' ? 'status-fail' : ''}>
                     {message}
                     </p>
                 )}
-            </div>
         </section>
     ) ;
 }

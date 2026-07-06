@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { api, enqueueToActiveSession } from '../api/api';
 
 interface Props {
+    reloadToken: string;
     flight: FlightInstance;
 }
 
@@ -12,7 +13,7 @@ interface BookResult {
   message: string;
 }
 
-export default function SeastMap({ flight }: Props) {
+export default function SeastMap({ reloadToken, flight }: Props) {
     const [seats, setSeats] = useState<SeatLayout[]>([]);
     const [bookedSeats, setBookedSeats] = useState<Set<string>>(new Set());
     const [loading, setLoading] = useState<boolean>(false);
@@ -25,7 +26,6 @@ export default function SeastMap({ flight }: Props) {
     const load = async () => {
         setLoading(true);
         setError(null);
-        setLatestResult(null);
 
         const [layoutResult, bookingResult] = await Promise.all([
             api.getSeatLayout(flight.flightNumber),
@@ -47,7 +47,7 @@ export default function SeastMap({ flight }: Props) {
     useEffect(() => {
         load();
         setUserId(crypto.randomUUID());
-    }, [flight]);
+    }, [flight, reloadToken]);
 
     const bookSeat = async (flightId: string, seatNumber: string, userId: string) => {
         setPendingPhase('Joining queue…');
@@ -97,14 +97,14 @@ export default function SeastMap({ flight }: Props) {
             </div>
             {error && <p className="status-fail">{error}</p>}
             { pendingPhase && <p> {pendingPhase} </p> }
-            { latestResult && <p> Seat {latestResult.seatNumber}: {latestResult.message} </p> } 
+            { latestResult && <p className={latestResult.ok ? 'status-ok' : 'status-fail'}> Seat {latestResult.seatNumber}: {latestResult.message} </p> } 
             <div className="seat-grid">
                 {seats.map((seat) => {
                     const booked = bookedSeats.has(seat.seatNumber);
                     const pending = pendingSeats.includes(seat.seatNumber);
                     return (
                         <button
-                            className={booked? 'seat-booked' : 'seat'}
+                            className={booked? 'seat seat-booked' : 'seat'}
                             key={seat.seatNumber}
                             disabled={booked || pending}
                             onClick={() => {bookSeat(flight.flightId, seat.seatNumber, userId)}}

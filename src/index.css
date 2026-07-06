@@ -65,6 +65,10 @@ h2 {
   margin: 0 0 8px;
 }
 
+p {
+  margin: 0;
+}
+
 code {
   font-family: var(--mono);
   font-size: 0.9em;
@@ -89,9 +93,6 @@ button {
   border: 1px solid var(--accent-border);
   padding: 7px 14px;
   font: inherit;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
   background: var(--accent-bg);
   color: var(--text-h);
   cursor: pointer;
@@ -128,5 +129,6 @@ th,
 td {
   text-align: left;
   padding: 6px 8px;
+  border-bottom: 1px solid var(--border);
 }
 

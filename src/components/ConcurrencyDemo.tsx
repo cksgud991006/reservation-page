@@ -106,7 +106,7 @@ export default function ConcurrencyDemo({ defaultFlightId, onFire }: Props) {
             </div>
             {phase && <p className="hint"> {phase} </p>}
             {summary && 
-                <div>
+                <div className="summary">
                     <p>  
                         <strong> {summary.successCount} </strong> 
                             succeeded, 

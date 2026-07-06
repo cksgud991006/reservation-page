@@ -20,7 +20,7 @@ export default function App() {
         <h1>Reservation API</h1>
         <p className="hint">
           A dashboard for the{' '}
-            <a href="https://github.com/cksgud991006/reservation-page">
+            <a href="https://github.com/cksgud991006/reservation-server">
               Reservation Server
             </a>
           , a high-concurrency seat reservation API backed by PostgreSQL + Redis.

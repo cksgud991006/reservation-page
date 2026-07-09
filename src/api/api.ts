@@ -1,7 +1,7 @@
 import type { FlightInstance, FlightBooking, FlightSeatCount, SeatLayout, ReservationBookResponse, EnqueueResponse, ReservationSessionResponse, ReservationWaitResponse } from "./types";
 
 const STORAGE_KEY = 'reservation-api-base-url';
-export const DEFAULT_BASE_URL = import.meta.env.API_BASE_URL;
+const DEFAULT_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export const getApiBaseUrl = (): string => {
     return localStorage.getItem(STORAGE_KEY) || DEFAULT_BASE_URL;
